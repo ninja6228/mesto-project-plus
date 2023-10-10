@@ -12,13 +12,13 @@ const createCard = (req: any, res: Response) => {
         res.status(200).send(card);
       }
     })
-    .catch((err) => res.status(500).send(`Произошла ошибка: ${err}`));
+    .catch(() => res.status(500).send('На сервере произошла ошибка'));
 };
 
 const getCards = (req: Request, res: Response) => {
   Cards.find({})
     .then((cards) => res.send(cards))
-    .catch((err) => res.status(500).send(`Произошла ошибка: ${err}`));
+    .catch(() => res.status(500).send('На сервере произошла ошибка'));
 };
 
 const deleteCard = (req: Request, res: Response) => {
@@ -33,7 +33,7 @@ const deleteCard = (req: Request, res: Response) => {
           .catch((err) => res.status(500).send(`Произошла ошибка при удалении карточки: ${err}`));
       }
     })
-    .catch((err) => res.status(500).send(`Произошла ошибка при поиске карточки: ${err}`));
+    .catch(() => res.status(500).send('На сервере произошла ошибка'));
 };
 
 const addLikes = (req: any, res: Response) => {
@@ -42,12 +42,12 @@ const addLikes = (req: any, res: Response) => {
   Cards.findByIdAndUpdate(cardId, { $addToSet: { likes: userId } }, { new: true })
     .then((card) => {
       if (!card) {
-        res.status(400).send('Переданы некорректные данные для потавки лайка');
+        res.status(400).send('Переданы некорректные данные для постановки лайка');
       } else {
         res.status(200).send(card);
       }
     })
-    .catch((err) => res.status(500).send(`Ошибка: ${err}`));
+    .catch(() => res.status(500).send('На сервере произошла ошибка'));
 };
 
 const removeLikes = (req: any, res: Response) => {
@@ -61,7 +61,7 @@ const removeLikes = (req: any, res: Response) => {
         res.status(200).send(card);
       }
     })
-    .catch((err) => res.status(500).send(`Ошибка: ${err}`));
+    .catch(() => res.status(500).send('На сервере произошла ошибка'));
 };
 
 export {

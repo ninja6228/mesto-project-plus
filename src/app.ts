@@ -2,11 +2,10 @@ import express, { Response, NextFunction } from 'express';
 import mongoose from 'mongoose';
 import users from './routes/user';
 import cards from './routes/card';
+import { DataBaseUrl, PORT } from './utils/config';
 
 const app = express();
 
-const { PORT = 3000 } = process.env;
-const DataBaseUrl = 'mongodb://127.0.0.1:27017/mestodb';
 const testId = '6523bf6d96a05c6bb4690bab';
 
 mongoose.connect(DataBaseUrl)

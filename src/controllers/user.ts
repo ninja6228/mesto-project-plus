@@ -11,7 +11,7 @@ const createUser = (req: Request, res: Response) => {
         res.status(200).send(users);
       }
     })
-    .catch((err) => res.status(500).send(`Произошла ошибка: ${err}`));
+    .catch(() => res.status(500).send('На сервере произошла ошибка'));
 };
 
 const getUser = (req: Request, res: Response) => {
@@ -24,13 +24,13 @@ const getUser = (req: Request, res: Response) => {
         res.send(user);
       }
     })
-    .catch((err) => res.status(500).send(`Произошла ошибка: ${err}`));
+    .catch(() => res.status(500).send('На сервере произошла ошибка'));
 };
 
 const getAllUsers = (req: Request, res: Response) => {
   User.find({})
     .then((users) => res.send(users))
-    .catch((err) => res.status(500).send(`Произошла ошибка: ${err}`));
+    .catch(() => res.status(500).send('На сервере произошла ошибка'));
 };
 
 const updateUserAvatar = (req: any, res: any) => {
@@ -44,7 +44,7 @@ const updateUserAvatar = (req: any, res: any) => {
         res.status(200).send(user);
       }
     })
-    .catch((err) => res.status(500).send(`Ошибка при обновлении данных пользователя:${err}`));
+    .catch(() => res.status(500).send('На сервере произошла ошибка'));
 };
 
 const updateUserInfo = (req: any, res: any) => {
@@ -58,7 +58,7 @@ const updateUserInfo = (req: any, res: any) => {
         res.status(200).send(user);
       }
     })
-    .catch((err) => res.status(500).send(`Ошибка при обновлении данных пользователя:${err}`));
+    .catch(() => res.status(500).send('На сервере произошла ошибка'));
 };
 
 export {
