@@ -17,7 +17,7 @@ routes.use('/users', auth, users);
 routes.use('/cards', auth, cards);
 
 routes.all('*', (req, res, next) => {
-  next(new NotFoundError('такого адреса нету'));
+  next(new NotFoundError('Некорректный запрос'));
 });
 
 export default routes;

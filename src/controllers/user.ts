@@ -7,6 +7,7 @@ import {
   NotFoundError,
   Unauthorized,
   Conflict,
+  BadRequst,
 } from '../errors/index';
 
 const SALT_ROUNDS = 10;
@@ -24,15 +25,16 @@ const createUser = (req: Request, res: Response, next: NextFunction) => {
       name, about, avatar, email, password: hash,
     }))
     .then((users) => {
-      if (users) {
-        res.status(201).send(users);
-      }
+      const { password: _, ...user } = users.toObject();
+      res.status(201).send(user);
     })
-    .catch((err) => {
-      if (err.code === 11000) {
+    .catch((error) => {
+      if (error.code === 11000) {
         next(new Conflict('Пользователь с таким Email уже есть'));
+      } else if (error.name === 'ValidationError') {
+        next(new BadRequst('Переданы некорректные данные при регистрации'));
       } else {
-        next(next);
+        next(error);
       }
     });
 };
@@ -72,21 +74,7 @@ const getAllUsers = (req: Request, res: Response, next: NextFunction) => {
 const updateUserAvatar = (req: IRequest, res: Response, next: NextFunction) => {
   const { avatar } = req.body;
   const userId = req.user?._id;
-  User.findByIdAndUpdate(userId, { avatar }, { new: true })
-    .then((user) => {
-      if (!user) {
-        throw new NotFoundError('Запрашиваемый пользователь не найден');
-      } else {
-        res.status(200).send(user);
-      }
-    })
-    .catch(next);
-};
-
-const updateUserInfo = (req: IRequest, res: Response, next: NextFunction) => {
-  const { name, about } = req.body;
-  const userId = req.user?._id;
-  User.findByIdAndUpdate(userId, { name, about }, { new: true })
+  User.findByIdAndUpdate(userId, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
         throw new NotFoundError('Запрашиваемый пользователь не найден');
@@ -94,7 +82,33 @@ const updateUserInfo = (req: IRequest, res: Response, next: NextFunction) => {
         res.status(201).send(user);
       }
     })
-    .catch(next);
+    .catch((error) => {
+      if (error.name === 'ValidationError') {
+        next(new BadRequst('переданы некорректные данные при обновлении аватарки'));
+      } else {
+        next(error);
+      }
+    });
+};
+
+const updateUserInfo = (req: IRequest, res: Response, next: NextFunction) => {
+  const { name, about } = req.body;
+  const userId = req.user?._id;
+  User.findByIdAndUpdate(userId, { name, about }, { new: true, runValidators: true })
+    .then((user) => {
+      if (!user) {
+        throw new NotFoundError('Запрашиваемый пользователь не найден');
+      } else {
+        res.status(201).send(user);
+      }
+    })
+    .catch((error) => {
+      if (error.name === 'ValidationError') {
+        next(new BadRequst('переданы некорректные данные при обновлении пользователя'));
+      } else {
+        next(error);
+      }
+    });
 };
 
 const login = (req: Request, res: Response, next: NextFunction) => {

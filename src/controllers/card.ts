@@ -7,14 +7,14 @@ const createCard = (req: IRequest, res: Response, next: NextFunction) => {
   const { name, link } = req.body;
   const userId = req.user?._id;
   Cards.create({ name, link, owner: userId })
-    .then((card) => {
-      if (!card) {
-        throw new NotFoundError('Нет пользователя с таким id');
+    .then((card) => res.status(201).send(card))
+    .catch((error) => {
+      if (error.name === 'ValidationError') {
+        next(new BadRequst('Переданы некорректные данные при создании карточки'));
       } else {
-        res.status(201).send(card);
+        next(error);
       }
-    })
-    .catch(next);
+    });
 };
 
 const getCards = (req: Request, res: Response, next: NextFunction) => {
@@ -34,7 +34,7 @@ const deleteCard = (req: IRequest, res: Response, next: NextFunction) => {
         const userId = req.user?._id;
         if (ownerId === userId) {
           Cards.findByIdAndDelete(req.params.cardId)
-            .then(() => res.status(200).send('Карточка успешна удалена'))
+            .then(() => res.status(200).send({ message: 'Карточка успешна удалена' }))
             .catch(next);
         } else {
           throw new Forbidden('Это не ваша карточка');
@@ -50,12 +50,16 @@ const addLikes = (req: IRequest, res: Response, next: NextFunction) => {
   Cards.findByIdAndUpdate(cardId, { $addToSet: { likes: userId } }, { new: true })
     .then((card) => {
       if (!card) {
-        throw new BadRequst('Переданы некорректные данные для постановки лайка');
+        throw new NotFoundError('Карточка с указанным ID не найдена');
       } else {
         res.status(200).send(card);
       }
     })
-    .catch(next);
+    .catch((error) => {
+      if (error.name === 'ValidationError') {
+        next(new BadRequst('Переданы некорректные данные для постановки лайка'));
+      }
+    });
 };
 
 const removeLikes = (req: IRequest, res: Response, next: NextFunction) => {
@@ -64,12 +68,16 @@ const removeLikes = (req: IRequest, res: Response, next: NextFunction) => {
   Cards.findByIdAndUpdate(cardId, { $pull: { likes: userId } }, { new: true })
     .then((card) => {
       if (!card) {
-        throw new BadRequst('Переданы некорректные данные для снятии лайка');
+        throw new NotFoundError('Карточка с указанным ID не найдена');
       } else {
         res.status(200).send(card);
       }
     })
-    .catch(next);
+    .catch((error) => {
+      if (error.name === 'ValidationError') {
+        next(new BadRequst('Переданы некорректные данные для снятии лайка'));
+      }
+    });
 };
 
 export {

@@ -37,13 +37,16 @@ const UserSchema = new Schema<IUser, UserModel>({
   avatar: {
     type: String,
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
+    validate: {
+      validator: (value: string) => validator.isURL(value),
+    },
   },
   email: {
     type: String,
     required: true,
     unique: true,
     validate: {
-      validator: (v: string) => validator.isEmail(v),
+      validator: (value: string) => validator.isEmail(value),
     },
   },
   password: {

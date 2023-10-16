@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "npx eslint src/**/*.ts",
     "build": "tsc",
-    "dev": "nodemon src/app.ts",
+    "dev": "ts-node-dev src/app.ts",
     "start": "ts-node src/app.ts"
   },
   "author": "Nazarov Aleksei",
@@ -30,7 +30,9 @@
     "bcrypt": "^5.1.1",
     "celebrate": "^15.0.1",
     "express": "^4.18.1",
+    "express-rate-limit": "^7.1.1",
     "express-winston": "^4.2.0",
+    "helmet": "^7.0.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^6.5.0",
     "validator": "^13.11.0",
