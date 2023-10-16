@@ -1,12 +1,12 @@
-import express, { Response, NextFunction } from 'express';
+import express from 'express';
 import mongoose from 'mongoose';
-import users from './routes/user';
-import cards from './routes/card';
+import { errors } from 'celebrate';
 import { DataBaseUrl, PORT } from './utils/config';
+import { requestLogger, errorLogger } from './middlewares/logger';
+import routes from './routes/index';
+import errorMiddleware from './middlewares/errorMiddleware';
 
 const app = express();
-
-const testId = '6523bf6d96a05c6bb4690bab';
 
 mongoose.connect(DataBaseUrl)
   .then(() => console.log(`Подключение к базе ${DataBaseUrl}`))
@@ -15,19 +15,11 @@ mongoose.connect(DataBaseUrl)
     console.error(err);
   });
 
-app.use(express.json());
-
-app.use((req: any, res: Response, next: NextFunction) => {
-  const userId = testId;
-  req.user = {
-    _id: userId,
-  };
-
-  next();
-});
-
-app.use('/users', users);
-app.use('/cards', cards);
+app.use(requestLogger);
+app.use(routes);
+app.use(errorLogger);
+app.use(errors());
+app.use(errorMiddleware);
 
 app.listen(PORT, () => {
   console.log(`Запушен порт: ${PORT}`);

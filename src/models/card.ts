@@ -1,15 +1,10 @@
 import mongoose from 'mongoose';
 
-interface IUserLike {
-  type: mongoose.Types.ObjectId;
-  ref: string;
-}
-
 interface ICard {
   name: string;
   link: string;
-  owner: mongoose.Schema.Types.ObjectId;
-  likes: IUserLike[];
+  owner: mongoose.Types.ObjectId;
+  likes: mongoose.Types.ObjectId[];
   createdAt: Date;
 }
 
