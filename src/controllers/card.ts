@@ -58,6 +58,8 @@ const addLikes = (req: IRequest, res: Response, next: NextFunction) => {
     .catch((error) => {
       if (error.name === 'ValidationError') {
         next(new BadRequst('Переданы некорректные данные для постановки лайка'));
+      } else {
+        next(error);
       }
     });
 };
@@ -76,6 +78,8 @@ const removeLikes = (req: IRequest, res: Response, next: NextFunction) => {
     .catch((error) => {
       if (error.name === 'ValidationError') {
         next(new BadRequst('Переданы некорректные данные для снятии лайка'));
+      } else {
+        next(error);
       }
     });
 };
