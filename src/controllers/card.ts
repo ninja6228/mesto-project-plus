@@ -61,9 +61,6 @@ const addLikes = (req: IRequest, res: Response, next: NextFunction) => {
 const removeLikes = (req: IRequest, res: Response, next: NextFunction) => {
   const userId = req.user?._id;
   const { cardId } = req.params;
-  if (!userId) {
-    throw new Error('Пользователь не аутентифицирован');
-  }
   Cards.findByIdAndUpdate(cardId, { $pull: { likes: userId } }, { new: true })
     .then((card) => {
       if (!card) {
